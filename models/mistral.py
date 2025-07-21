@@ -16,6 +16,7 @@ class MistralModel:
             model_id,
             device_map="auto"
         )
+        print("Ready!")
 
     def generate(self, prompt: str) -> str:
         system_prompt = (
