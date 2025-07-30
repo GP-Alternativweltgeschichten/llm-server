@@ -14,6 +14,7 @@ def status():
 def generate():
     """Print available functions."""
     data = request.get_json()
+    print("Received data:", data)
     prompt = data.get("prompt", "")
     if not prompt:
         return jsonify({"error": "Missing prompt"}), 400

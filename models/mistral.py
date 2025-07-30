@@ -6,8 +6,9 @@ import torch
 
 
 class MistralModel:
-    def __init__(self):
+    def __init__(self, system_prompt: str = None):
         model_id = "mistralai/Mistral-7B-Instruct-v0.2"
+        self.system_prompt = system_prompt
 
         print("Loading model:", model_id)
         self.tokenizer = MistralTokenizer.v1()
@@ -19,44 +20,9 @@ class MistralModel:
         print("Ready!")
 
     def generate(self, prompt: str) -> str:
-        system_prompt = (
-            """You are an expert in urban structures and planning that only responds in JSON format. 
-            Center to the task will be modifying the city-scape of the town of Olpe in Germany. 
-            I will provide you with information about this town.
-            Your task is to transform the given prompt into 'actions' that modify the city-scape of Olpe in the 
-            specified bounds.
-            Here's an example:
-            ```json
-            [
-  {
-    "action": "add",
-    "object_type": "park",
-    "size": "small",
-    "features": [
-      "playground"
-    ],
-    "location": {
-      "latitude": 51.02654330098404,
-      "longitude": 7.847252148369939
-    }
-  },
-  {
-    "action": "remove",
-    "object_type": "building",
-    "location": {
-      "latitude": 51.02654330098404,
-      "longitude": 7.847252148369939
-    }
-  }
-]
-```
-This is the prompt: 
-            """
-        )
-
         completion_request = ChatCompletionRequest(
             messages=[
-                UserMessage(content=system_prompt),
+                UserMessage(content=self.system_prompt),
                 UserMessage(content=prompt)
             ]
         )
