@@ -1,8 +1,14 @@
-from flask import Flask, jsonify, request
-from model_registry import get_model
+import shutil
+
+from flask import Flask, jsonify, request, send_file
+from model_registry import get_model, get_blender_model
+import subprocess
+import uuid
+import os
 
 app = Flask(__name__)
 model = get_model()
+blender_model = get_blender_model()
 
 @app.route('/status')
 def status():
@@ -21,6 +27,53 @@ def generate():
 
     response = model.generate(prompt)
     return jsonify({"response": response})
+
+@app.route("/generate_blender_code", methods=["POST"])
+def generate_blender_code():
+    """Generate Blender-compatible Python script and run it."""
+    data = request.get_json()
+    prompt = data.get("prompt", "")
+    if not prompt:
+        return jsonify({"error": "Missing prompt"}), 400
+
+    try:
+        result, output_model_path = generate_model_with_blender(prompt)
+
+        if result.returncode != 0:
+            return jsonify({
+                "error": "Blender execution failed",
+                "stderr": result.stderr,
+                "stdout": result.stdout
+            }), 500
+
+        return send_file(
+            output_model_path,
+            as_attachment=True,
+            download_name="generated_model.fbx",
+            mimetype="application/octet-stream"
+        )
+
+    except subprocess.TimeoutExpired:
+        return jsonify({"error": "Blender process timed out"}), 500
+
+
+def generate_model_with_blender(prompt):
+    blender_script = blender_model.generate(prompt)
+    unique_id = str(uuid.uuid4())
+    os.makedirs("./output", exist_ok=True)
+
+    script_path = f"./output/blender_script_{unique_id}.py"
+    output_model_path = os.path.abspath(f"./output/generated_model_{unique_id}.fbx")
+    with open(script_path, "w") as f:
+        f.write(blender_script)
+
+    result = subprocess.run(
+        ["blender", "--background", "--python", script_path, "--", output_model_path],
+        capture_output=True, text=True, timeout=30
+    )
+    print(result.stdout)
+    print(result.stderr)
+    return result, output_model_path
 
 
 @app.route('/', methods=["GET"])

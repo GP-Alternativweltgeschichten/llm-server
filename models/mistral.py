@@ -6,7 +6,7 @@ import torch
 
 
 class MistralModel:
-    def __init__(self, system_prompt: str = None):
+    def __init__(self, system_prompt: str = None, output_tokens: int = 512):
         model_id = "mistralai/Mistral-7B-Instruct-v0.2"
         self.system_prompt = system_prompt
 
@@ -17,6 +17,7 @@ class MistralModel:
             model_id,
             device_map="auto"
         )
+        self.output_tokens = output_tokens
         print("Ready!")
 
     def generate(self, prompt: str) -> str:
@@ -33,7 +34,7 @@ class MistralModel:
         attention_mask = torch.ones_like(input_ids).to(self.model.device)
 
         generated_ids = self.model.generate(
-            input_ids, max_new_tokens=256,
+            input_ids, max_new_tokens=self.output_tokens,
             do_sample=True,
             attention_mask=attention_mask,
         )
