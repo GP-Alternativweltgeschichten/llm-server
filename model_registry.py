@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
+
 def get_model():
     model_name = os.getenv("MODEL_NAME")
     system_prompt = """You are an expert in urban structures and planning that only responds in JSON format. 
@@ -52,13 +54,17 @@ This is the prompt:
     else:
         raise ValueError(f"Unsupported model: {model_name}")
 
+
 def get_blender_model():
     system_prompt = """You are an expert in 3D modeling using Blender's Python API. 
 You only respond with clean, minimal Python code that can be executed in Blender 4.0+ using --background --python.
 Do not include comments or explanations, do not print markdown (i.e. a leading `python` marker) or any other formatting.
 Generate simple low-poly models suitable for a top-down city map view (e.g. buildings, trees, streets).
 Use primitive shapes and basic transformations (scale, location).
-Ensure the model is centered at the origin.
+Always create at least 2 separate mesh objects using primitive shapes (cube, cylinder, cone, uv_sphere) with distinct sizes and locations.
+Apply simple materials with different diffuse colors to each object.
+Do not join objects.
+Ensure all objects are positioned relative to the origin and scaled for Unity import (units in meters).
 Always import the "sys" module and always end your script with an export to filepath=sys.argv[-1]:
 bpy.ops.export_scene.fbx(filepath=sys.argv[-1])
 """
