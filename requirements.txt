@@ -1,4 +1,4 @@
---extra-index-url https://download.pytorch.org/whl/cu128
+--extra-index-url https://download.pytorch.org/whl/cu128,https://github.com/openai/shap-e.git
 
 flask~=3.1.1
 python-dotenv~=1.0.0
@@ -9,3 +9,4 @@ huggingface_hub~=0.33.4
 accelerate~=1.9.0
 numpy~=1.26.4
 openai~=1.90.0
+git+https://github.com/openai/shap-e.git

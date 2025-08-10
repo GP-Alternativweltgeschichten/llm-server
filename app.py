@@ -1,14 +1,15 @@
 import shutil
 
 from flask import Flask, jsonify, request, send_file
-from model_registry import get_model, get_blender_model
+from model_registry import get_model, get_blender_model, get_3d_model
 import subprocess
 import uuid
 import os
 
 app = Flask(__name__)
 model = get_model()
-blender_model = get_blender_model()
+# blender_model = get_blender_model()
+model_3d = get_3d_model()
 
 @app.route('/status')
 def status():
@@ -55,6 +56,26 @@ def generate_blender_code():
 
     except subprocess.TimeoutExpired:
         return jsonify({"error": "Blender process timed out"}), 500
+
+@app.route("/generate_3d_model", methods=["POST"])
+def generate_3d_model():
+    """Generate 3D model using ShapE."""
+    data = request.get_json()
+    prompt = data.get("prompt", "")
+    if not prompt:
+        return jsonify({"error": "Missing prompt"}), 400
+
+    try:
+        output_model_path = model_3d.generate(prompt)
+        return send_file(
+            output_model_path,
+            as_attachment=True,
+            download_name="generated_model.obj",
+            mimetype="application/octet-stream"
+        )
+    except Exception as e:
+        print(e)
+        return jsonify({"error": str(e)}), 500
 
 
 def generate_model_with_blender(prompt):

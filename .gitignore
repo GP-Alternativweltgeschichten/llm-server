@@ -1,1 +1,3 @@
 .env
+/output/
+/shap_e_model_cache/

@@ -88,6 +88,10 @@ bpy.ops.export_scene.fbx(filepath=sys.argv[-1])
     else:
         raise ValueError(f"Unsupported model: {model_name}")
 
+def get_3d_model():
+    # model_name = os.getenv("3D_MODEL_NAME")
+    from models.shap_e import ShapEModel
+    return ShapEModel(output_path="./output/generated_model.obj")
 
 def hf_login():
     from huggingface_hub import login

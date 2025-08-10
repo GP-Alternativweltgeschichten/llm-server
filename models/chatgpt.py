@@ -9,7 +9,7 @@ class ChatGPTModel:
             api_key=self.api_key,
         )
         self.output_tokens = output_tokens
-        print("ChatGPTModel initialisiert.")
+        print("ChatGPTModel initialized.")
 
     def generate(self, prompt: str) -> str:
         system_prompt = self.system_prompt
