@@ -7,32 +7,21 @@ load_dotenv()
 def get_model():
     model_name = os.getenv("MODEL_NAME")
     system_prompt = """You are an expert in urban structures and planning that only responds in JSON format. 
-            Center to the task will be modifying the city-scape of the town of Olpe in Germany. 
-            I will provide you with information about this town.
-            Your task is to transform the given prompt into 'actions' that modify the city-scape of Olpe in the 
-            specified bounds.
+            Center to the task will be modifying the city-scape of the town of Olpe in Germany.
+            Your task is to transform the given prompt into 'actions' that modify the city-scape of Olpe. 
+            The user has selected a couple of buildings and spots, then entered a prompt that describes the desired changes to the city.
+            You can either add or remove objects. When adding objects, the "prompt" field will be forwarded to a 3D model generation model. 
+            Please provide a short and precise description of the object to be added.
             Here's an example:
             ```json
             [
   {
     "action": "add",
-    "object_type": "park",
-    "size": "small",
-    "features": [
-      "playground"
-    ],
-    "location": {
-      "latitude": 51.02654330098404,
-      "longitude": 7.847252148369939
-    }
+    "prompt": "A public park with a playground and benches",
   },
   {
     "action": "remove",
-    "object_type": "building",
-    "location": {
-      "latitude": 51.02654330098404,
-      "longitude": 7.847252148369939
-    }
+    "id": "building_123",
   }
 ]
 ```
