@@ -1,3 +1,4 @@
+import json
 import shutil
 
 from flask import Flask, jsonify, request, send_file
@@ -27,7 +28,7 @@ def generate():
         return jsonify({"error": "Missing prompt"}), 400
 
     response = model.generate(prompt)
-    return jsonify({"response": response})
+    return jsonify({"response": json.loads(response)})
 
 @app.route("/generate_blender_code", methods=["POST"])
 def generate_blender_code():
@@ -77,7 +78,6 @@ def generate_3d_model():
         print(e)
         return jsonify({"error": str(e)}), 500
 
-
 def generate_model_with_blender(prompt):
     blender_script = blender_model.generate(prompt)
     unique_id = str(uuid.uuid4())
@@ -95,7 +95,6 @@ def generate_model_with_blender(prompt):
     print(result.stdout)
     print(result.stderr)
     return result, output_model_path
-
 
 @app.route('/', methods=["GET"])
 def help():
