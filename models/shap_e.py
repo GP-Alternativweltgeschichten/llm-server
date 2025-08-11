@@ -20,7 +20,7 @@ class ShapEModel:
             batch_size=1,
             model=self.text_model,
             diffusion=self.diffusion,
-            guidance_scale=15.0,
+            guidance_scale=12.0,
             model_kwargs=dict(texts=[prompt]),
             progress=True,
             clip_denoised=True,
