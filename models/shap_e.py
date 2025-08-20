@@ -3,6 +3,7 @@ from shap_e.diffusion.sample import sample_latents
 from shap_e.diffusion.gaussian_diffusion import diffusion_from_config
 from shap_e.models.download import load_model, load_config
 from shap_e.util.notebooks import decode_latent_mesh
+import pymeshlab as ml
 
 class ShapEModel:
     def __init__(self, output_path):
@@ -33,8 +34,16 @@ class ShapEModel:
         )
 
         for latent in latents:
-            mesh = decode_latent_mesh(self.mesh_model, latent, mesh_size=128).tri_mesh()
+            mesh = decode_latent_mesh(self.mesh_model, latent).tri_mesh()
+
             with open(self.output_path, 'w') as f:
                 mesh.write_obj(f)
+
+            ms = ml.MeshSet()
+            ms.load_new_mesh(self.output_path)
+
+            ms.apply_filter('meshing_decimation_quadric_edge_collapse', targetfacenum=5000)
+
+            ms.save_current_mesh(self.output_path)
 
         return self.output_path
