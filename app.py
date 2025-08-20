@@ -6,6 +6,7 @@ from model_registry import get_model, get_blender_model, get_3d_model
 import subprocess
 import uuid
 import os
+import json
 
 app = Flask(__name__)
 model = get_model()
@@ -24,10 +25,12 @@ def generate():
     data = request.get_json()
     print("Received data:", data)
     prompt = data.get("prompt", "")
+    context = data.get("context", "")
     if not prompt:
         return jsonify({"error": "Missing prompt"}), 400
 
-    response = model.generate(prompt)
+    context_str = json.dumps(context[:100])
+    response = model.generate(prompt, context_str)
     return jsonify({"response": json.loads(response)})
 
 @app.route("/generate_blender_code", methods=["POST"])

@@ -11,14 +11,15 @@ class ChatGPTModel:
         self.output_tokens = output_tokens
         print("ChatGPTModel initialized.")
 
-    def generate(self, prompt: str) -> str:
+    def generate(self, prompt: str, context_str: str) -> str:
         system_prompt = self.system_prompt
 
         completion = self.client.responses.create(
             model="gpt-4o-mini",
             input=[
                 {"role": "developer", "content": system_prompt},
-                {"role": "user", "content": prompt}
+                {"role": "user", "content": prompt},
+                {"role": "user", "content": "These are the items I have selected: " + context_str},
             ],
             max_output_tokens=self.output_tokens,
         )
