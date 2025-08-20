@@ -33,7 +33,7 @@ class ShapEModel:
         )
 
         for latent in latents:
-            mesh = decode_latent_mesh(self.mesh_model, latent).tri_mesh()
+            mesh = decode_latent_mesh(self.mesh_model, latent, mesh_size=128).tri_mesh()
             with open(self.output_path, 'w') as f:
                 mesh.write_obj(f)
 
