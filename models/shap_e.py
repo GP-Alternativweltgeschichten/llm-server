@@ -5,6 +5,8 @@ from shap_e.models.download import load_model, load_config
 from shap_e.util.notebooks import decode_latent_mesh
 import pymeshlab as ml
 
+TARGET_VERTICES_NUM = 10000
+
 class ShapEModel:
     def __init__(self, output_path):
         self.output_path = output_path
@@ -42,7 +44,15 @@ class ShapEModel:
             ms = ml.MeshSet()
             ms.load_new_mesh(self.output_path)
 
-            ms.apply_filter('meshing_decimation_quadric_edge_collapse', targetfacenum=5000)
+            ms.meshing_remove_duplicate_vertices()
+            ms.meshing_remove_unreferenced_vertices()
+
+            num_faces = 100 + ms.current_mesh().face_number() - (ms.current_mesh().vertex_number() - TARGET_VERTICES_NUM)
+
+            while (ms.current_mesh().vertex_number() > TARGET_VERTICES_NUM):
+                ms.meshing_decimation_quadric_edge_collapse(targetfacenum=num_faces, preservenormal=True)
+                print("Mesh decimated to", num_faces, "faces contains", ms.current_mesh().vertex_number(), "vertex")
+                num_faces = num_faces - (ms.current_mesh().vertex_number() - TARGET_VERTICES_NUM)
 
             ms.save_current_mesh(self.output_path)
 

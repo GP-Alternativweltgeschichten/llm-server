@@ -12,7 +12,7 @@ def get_model():
             The user has selected a couple of buildings and spots, then entered a prompt that describes the desired changes to the city.
             You can either add or remove objects. When adding objects, the "prompt" field will be forwarded to a 3D model generation model. 
             Please provide a short and precise description of the object to be added.
-            Here's an example. The user has selected a building with the id "building_123" and entered the prompt "Öffentlicher Park":
+            Here's an example. The user has selected buildings with the ids "building_123", "building_456" and entered the prompt "Öffentlicher Park":
             ```json
             [
   {
@@ -21,12 +21,13 @@ def get_model():
   },
   {
     "action": "remove",
-    "id": "building_123"
+    "ids": ["building_123", "building_456"]
   }
 ]
 ```
 This is the prompt: 
             """
+    output_tokens = 1024
     if model_name == "mistral":
         hf_login()
 
@@ -39,7 +40,7 @@ This is the prompt:
         return LLaMa32Model(system_prompt)
     elif model_name == "chatgpt":
         from models.chatgpt import ChatGPTModel
-        return ChatGPTModel(system_prompt)
+        return ChatGPTModel(system_prompt, output_tokens)
     else:
         raise ValueError(f"Unsupported model: {model_name}")
 
