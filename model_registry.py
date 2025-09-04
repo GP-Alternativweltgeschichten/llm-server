@@ -6,27 +6,8 @@ load_dotenv()
 
 def get_model():
     model_name = os.getenv("MODEL_NAME")
-    system_prompt = """You are an expert in urban structures and planning that only responds in JSON format. 
-            Center to the task will be modifying the city-scape of the town of Olpe in Germany.
-            Your task is to transform the given prompt into 'actions' that modify the city-scape of Olpe. 
-            The user has selected a couple of buildings and spots, then entered a prompt that describes the desired changes to the city.
-            You can either add or remove objects. When adding objects, the "prompt" field will be forwarded to a 3D model generation model. 
-            Please provide a short and precise description of the object to be added.
-            Here's an example. The user has selected buildings with the ids "building_123", "building_456" and entered the prompt "Öffentlicher Park":
-            ```json
-            [
-  {
-    "action": "add",
-    "prompt": "A public park with a playground and benches"
-  },
-  {
-    "action": "remove",
-    "ids": ["building_123", "building_456"]
-  }
-]
-```
-This is the prompt: 
-            """
+    with open("system_prompt.txt", "r", encoding="utf-8") as f:
+        system_prompt = f.read()
     output_tokens = 1024
     if model_name == "mistral":
         hf_login()
