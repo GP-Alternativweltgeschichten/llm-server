@@ -13,8 +13,6 @@ class ShapEModel:
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.text_model = load_model('text300M', device=self.device)
         self.mesh_model = load_model('transmitter', device=self.device)
-        print(type(self.text_model))
-        print(type(self.mesh_model))
         self.diffusion = diffusion_from_config(load_config('diffusion'))
         print("ShapE initialized.")
 
